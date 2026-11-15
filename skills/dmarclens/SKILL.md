@@ -5,7 +5,7 @@ license: MIT
 metadata:
   author: DMARC Lens
   homepage: https://www.dmarclens.io/
-  version: "1.1"
+  version: "1.2"
 ---
 
 # DMARC Lens
@@ -136,6 +136,13 @@ and they work for any domain, not just ones registered in DMARC Lens.
 | TLS reporting wizard | `/tools/tls-rpt` | Builds the TLS-RPT record |
 | BIMI wizard | `/tools/bimi` | Checks DMARC readiness and builds the record |
 
+One more tool comes with an account rather than free: **Delivery diagnosis**
+(`/tools/diagnose`). The user pastes a bounce message, or the full headers of a
+message that went to spam, and it names the cause: authentication results,
+Microsoft 365 verdicts (SCL, SFV, CAT, BCL), SpamAssassin and Rspamd scores,
+blocklist and policy refusals, SMTP and enhanced status codes. It reads only
+what was pasted; nothing is looked up or stored.
+
 **Without a key:** give the user the page link (for the domain check, include
 `?domain=` so it runs on arrival). The pages run a short automatic browser
 check for visitors and are limited per address; do not script them.
@@ -152,6 +159,7 @@ GET  /api/tools/mail-records?domain=example.com          MX, MTA-STS, TLS-RPT an
 GET  /api/tools/dkim-selector?domain=example.com&selector=s1   selectors in use; whether a name is free
 GET  /api/tools/report-address?domain=example.com&address=rua@example.net   can this address receive the domain's reports?
 POST /api/tools/arc      {"message": "<raw headers or message>"}   the ARC chain, verified
+POST /api/tools/diagnose {"text": "<bounce, or headers of a message in spam>"}   why it bounced or was junked; findings most telling first
 ```
 
 Each lookup can take up to 25 seconds, because it waits on other people's DNS.
